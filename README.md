@@ -21,4 +21,8 @@ from ion.url import parse, domain
 url = 'https://www.google.com/search?q=python'
 dom = domain(url)
 query = parse(url, ['query'], as_dict=True)
+print('Domain:', dom, 'and query:', query)
+```
+```
+Domain: google.com and query {'query': {'q': 'python'}}
 ```
