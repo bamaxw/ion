@@ -16,3 +16,4 @@ def describe_lambda(
     if doc is not None:
         if not lambda_func.__doc__ or force:
             lambda_func.__doc__ = doc
+    return lambda_func
