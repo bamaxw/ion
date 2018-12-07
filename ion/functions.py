@@ -4,6 +4,7 @@ from typing import Callable, Optional
 def describe_lambda(
         lambda_func: Callable,
         name: Optional[str] = None,
+        qualname: Optional[str] = None,
         doc: Optional[str] = None,
         force: bool = False
 ) -> Callable:
@@ -11,6 +12,7 @@ def describe_lambda(
     if name is not None:
         if not lambda_func.__name__ or force:
             lambda_func.__name__ = name
+    if qualname is not None:
         if not lambda_func.__qualname__ or force:
             lambda_func.__qualname__ = name
     if doc is not None:
