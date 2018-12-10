@@ -112,7 +112,7 @@ def make_property(
 ):
     '''
     Creates a getter and setter properties on a class object
-        for a given property name
+    for a given property name
     '''
     prop_attr = f'_{prop_name}'
     _getter = _setter = None
