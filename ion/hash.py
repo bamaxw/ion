@@ -1,6 +1,6 @@
 '''Helper functions and classes for hashing'''
 from functools import partial
-from typing import Union
+from typing import Any
 import logging
 import hashlib
 import os
