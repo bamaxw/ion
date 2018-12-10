@@ -1,5 +1,6 @@
 '''Helper functions and classes for hashing'''
 from functools import partial
+from typing import Union
 import logging
 import hashlib
 import os
@@ -11,9 +12,12 @@ _HASHLIB_TYPES = {
     'md5': hashlib.md5
 }
 
-def genhash(string: str, hashfunc, asbytes=False) -> str:
+def genhash(string: Union[str, bytes], hashfunc, asbytes=False) -> str:
     '''Simplified hashlib hashing'''
-    hashval = hashfunc(string)
+    try:
+        hashval = hashfunc(string)
+    except TypeError:
+        hashval = hashfunc(string.encode('utf-8'))
     if asbytes:
         hashval.digest()
     return hashval.hexdigest()
