@@ -45,7 +45,7 @@ class MemoizeWithTimeout:
                     value=return_value,
                     timestamp=time.time()
                 )
-            return cached.timestamp
+            return cached.value
         return _wrapper
 
 
