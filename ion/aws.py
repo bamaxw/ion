@@ -21,13 +21,16 @@ class AWSManager:
     def client(self, client_name: str, region_name: Optional[str] = None):
         '''Get boto3 client equivalent to boto3.client(client_name, region_name=region_name)'''
         log.info('Creating %s client [region: %s]!', client_name, region_name or self.region_name)
-        try:
-            if client_name not in self._clients:
-                self._clients[client_name] = boto3.client(client_name, region_name=region_name or self.region_name)
-            return self._clients[client_name]
-        except:
-            raise
-            log.warning('No detected init configuration for %s!', client_name)
+        if client_name not in self._clients:
+            self._clients[client_name] = boto3.client(client_name, region_name=region_name or self.region_name)
+        return self._clients[client_name]
+
+    def resource(self, resource_name: str, region_name: Optional[str] = None):
+        '''Get boto3 resource equivalent to boto3.resource(resource_name, region_name=region_name)'''
+        log.info('Creating %s resource [region: %s]!', resource_name, region_name or self.region_name)
+        if resource_name not in self._clients:
+            self._resources[resource_name] = boto3.resource(resource_name, region_name=region_name or self.region_name)
+        return self._resources[resource_name]
 
     def get_export(self, export_name: str):
         '''Get value of CloudFormation export'''
