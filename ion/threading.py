@@ -2,6 +2,7 @@
 from typing import Optional, Callable, Any, Sequence
 from itertools import zip_longest
 from random import randrange
+from functools import wraps
 import contextlib
 import threading
 import logging
@@ -118,3 +119,12 @@ def non_blocking_lock(lock: 'threading.Lock'):
         yield lock
     finally:
         lock.release()
+
+def synchronize(func: Callable) -> Callable:
+    '''Allows only one thread at a time to access the decorated resource'''
+    lock = threading.Lock()
+    @wraps(func)
+    def wrapper(*a, **kw):
+        with lock:
+            return func(*a, **kw)
+    return wrapper
