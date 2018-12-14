@@ -39,7 +39,9 @@ class ThreadManager:
     def foreach(self, target: Target = None, args: ArgList = (), kwargs: KwargList = ()):
         '''Runs a target function in a separate thread for each args-kwargs pair'''
         target = target or self.target
-        iterator = zip_longest(tuple(args), tuple(kwargs))
+        print(args)
+        iterator = lists(zip_longest(tuple(args), tuple(kwargs)))
+        print('IT', iterator)
         for a, kw in iterator:
             print(a, kw)
             self.run(target=target, args=a, kwargs=kw)
