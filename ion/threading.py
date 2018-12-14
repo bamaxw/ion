@@ -41,6 +41,7 @@ class ThreadManager:
         target = target or self.target
         iterator = zip_longest(tuple(args), tuple(kwargs))
         for a, kw in iterator:
+            print(a, kw)
             self.run(target=target, args=a, kwargs=kw)
         self.join()
 
