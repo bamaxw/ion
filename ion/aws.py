@@ -1,8 +1,12 @@
 '''Helper classes and functions facilitating boto3 usage'''
-from typing import Optional
+from typing import Optional, Generator
 import logging
+import time
 
 import boto3
+
+from .json import dump
+from .time import msts
 
 AWS_DEFAULT_REGION = 'eu-west-1'
 log = logging.getLogger(__name__)
@@ -32,9 +36,9 @@ class AWSManager:
             self._resources[resource_name] = boto3.resource(resource_name, region_name=region_name or self.region_name)
         return self._resources[resource_name]
 
-    def get_export(self, export_name: str):
+    def get_export(self, export_name: str, **kw):
         '''Get value of CloudFormation export'''
-        cloud_formation = self.client('cloudformation')
+        cloud_formation = self.client('cloudformation', **kw)
         args = {}
         while True:
             response = cloud_formation.list_exports(**args)
@@ -47,6 +51,59 @@ class AWSManager:
                 break
             args = {'NextToken': next_token}
         raise ValueError(f'Could not find export value for {export_name}')
+
+    def stream_logs(self, log_group: str, stream_prefix: str, *,
+                    filter_pattern: Optional[str] = None,
+                    start: Optional[int] = None,
+                    **kw) -> Generator[str, None, None]:
+        '''
+        Stream logs to console
+        Arguments:
+            log_group:       which log group should the logs be streamed from
+            stream_prefix:   which log streams should be included in this stream
+                             must include streams or prefix but not both!
+            prefix:          streams with which prefix should be included in this streams
+                             must include streams or prefix but not both!
+            filter_pattern:  specify filter for the logs
+            start:           when should the stream begin, by default it's the timestamp of when
+                             this method was called
+        '''
+        logs = self.client('logs', **kw)
+        params = dict(
+            logGroupName=log_group,
+            orderBy='LastEventTime',
+            descending=True
+        )
+        paginator = logs.get_paginator('describe_log_streams')
+        stream_iterator = paginator.paginate(**params)
+        jmespath = f"logStreams[?starts_with(logStreamName, `{stream_prefix}`)]"
+        log.info('Filtering stream iterator with JMESPath: %s', jmespath)
+        filtered_iterator = stream_iterator.search(jmespath)
+        try:
+            stream = next(filtered_iterator)['logStreamName']
+        except StopIteration:
+            raise ValueError(f"Can't find log stream with prefix: {stream_prefix} in log group: {log_group}!")
+        if start is None:
+            start = msts()
+        start_time = start
+        next_token = {}
+        while True:
+            response = logs.get_log_events(
+                logGroupName=log_group,
+                logStreamName=stream,
+                startTime=start_time,
+                endTime=10_000_000_000,
+                limit=100,
+                startFromHead=True,
+                **next_token,
+            )
+            events = response.pop('events')
+            # print(dump(response))
+            for event in events:
+                if not filter_pattern or filter_pattern in event['message']:
+                    yield event['message']
+            next_token = {'nextToken': response['nextForwardToken']}
+            time.sleep(0.1)
 
 
 # AWSManager with default variables is available as AWS from ion.aws
