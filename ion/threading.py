@@ -40,7 +40,7 @@ class ThreadManager:
         '''Runs a target function in a separate thread for each args-kwargs pair'''
         target = target or self.target
         print(args)
-        iterator = lists(zip_longest(tuple(args), tuple(kwargs)))
+        iterator = list(zip_longest(tuple(args), tuple(kwargs)))
         print('IT', iterator)
         for a, kw in iterator:
             print(a, kw)
