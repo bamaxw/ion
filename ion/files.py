@@ -58,6 +58,14 @@ def get_dirname(__reset_stack=0, last=False):
         return dirname.split(os.path.sep)[-1]
     return dirname
 
+def get_main_dir() -> str:
+    '''Get directory of the main script'''
+    import __main__ as main
+    try:
+        return main.__file__
+    except AttributeError:
+        return os.getcwd()
+
 def is_interactive():
     '''Checks whether python session is run from interactive shell'''
     import __main__ as main
