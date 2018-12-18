@@ -84,21 +84,21 @@ class AWSManager:
         except StopIteration:
             raise ValueError(f"Can't find log stream with prefix: {stream_prefix} in log group: {log_group}!")
         if start is None:
-            start = msts()
+            start = msts() - (1000 * 60)
         start_time = start
         next_token = {}
+        log.info('Getting log events from %s', stream)
         while True:
             response = logs.get_log_events(
                 logGroupName=log_group,
                 logStreamName=stream,
                 startTime=start_time,
-                endTime=10_000_000_000,
                 limit=100,
                 startFromHead=True,
                 **next_token,
             )
-            events = response.pop('events')
             # print(dump(response))
+            events = response.pop('events')
             for event in events:
                 if not filter_pattern or filter_pattern in event['message']:
                     yield event['message']
