@@ -106,12 +106,11 @@ class AWSManager:
                 startFromHead=True,
                 **next_token
             )
-            events = response.pop('events')
-            for event in events:
+            for event in response['events']:
+                msg = event['msg']
                 if not filter_pattern:
                     yield msg, None
-                elif re.search(filter_pattern, event['message']):
-                    msg = event['message']
+                elif re.search(filter_pattern, msg):
                     if disable_highlight:
                         yield msg, None
                     else:
