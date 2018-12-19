@@ -4,6 +4,8 @@ from decimal import Decimal
 
 import simplejson as json
 
+from .files import read
+
 JsonPayload = Union[str, bytes]
 
 
@@ -18,3 +20,7 @@ def aws_load(payload: JsonPayload) -> Any:
 def dump(payload: Any) -> str:
     '''Converts python data structure into a json encoded string'''
     return json.dumps(payload, indent=4)
+
+def read_json(filename: str) -> Any:
+    '''Reads a json file and outputs its python representation'''
+    return load(read(filename))
