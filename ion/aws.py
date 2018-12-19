@@ -2,14 +2,17 @@
 from typing import Optional, Generator
 import logging
 import time
+import re
 
 import boto3
 
 from .json import dump
 from .time import msts
+from .bash import colors
 
 AWS_DEFAULT_REGION = 'eu-west-1'
 log = logging.getLogger(__name__)
+
 
 class AWSManager:
     '''
@@ -52,12 +55,19 @@ class AWSManager:
             args = {'NextToken': next_token}
         raise ValueError(f'Could not find export value for {export_name}')
 
-    def stream_logs(self, log_group: str, stream_prefix: str, *,
-                    filter_pattern: Optional[str] = None,
-                    start: Optional[int] = None,
-                    **kw) -> Generator[str, None, None]:
+    def stream_logs(
+            self,
+            log_group: str,
+            stream_prefix: str,
+            *,
+            filter_pattern: Optional[str] = None,
+            start: Optional[int] = None,
+            disable_highlight: bool = False,
+            **kw
+    ) -> Generator[str, None, None]:
         '''
-        Stream logs to console
+        Gets log events from aws logs stream, and yields them out in a form
+        (<message>, <message with bash formatted highlight>)
         Arguments:
             log_group:       which log group should the logs be streamed from
             stream_prefix:   which log streams should be included in this stream
@@ -77,14 +87,13 @@ class AWSManager:
         paginator = logs.get_paginator('describe_log_streams')
         stream_iterator = paginator.paginate(**params)
         jmespath = f"logStreams[?starts_with(logStreamName, `{stream_prefix}`)]"
-        log.info('Filtering stream iterator with JMESPath: %s', jmespath)
         filtered_iterator = stream_iterator.search(jmespath)
         try:
             stream = next(filtered_iterator)['logStreamName']
         except StopIteration:
             raise ValueError(f"Can't find log stream with prefix: {stream_prefix} in log group: {log_group}!")
         if start is None:
-            start = msts() - (1000 * 60)
+            start = msts()
         start_time = start
         next_token = {}
         log.info('Getting log events from %s', stream)
@@ -95,13 +104,21 @@ class AWSManager:
                 startTime=start_time,
                 limit=100,
                 startFromHead=True,
-                **next_token,
+                **next_token
             )
-            # print(dump(response))
             events = response.pop('events')
             for event in events:
-                if not filter_pattern or filter_pattern in event['message']:
-                    yield event['message']
+                if not filter_pattern:
+                    yield msg, None
+                elif re.search(filter_pattern, event['message']):
+                    msg = event['message']
+                    if disable_highlight:
+                        yield msg, None
+                    else:
+                        msg_highlight = re.sub(f'({filter_pattern})', fr'{colors.yellow}\1{colors.reset}', msg)
+                        yield msg, msg_highlight
+                else:
+                    log.debug('Rejecting message: %s', event['message'])
             next_token = {'nextToken': response['nextForwardToken']}
             time.sleep(0.1)
 
