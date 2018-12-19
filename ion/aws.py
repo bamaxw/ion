@@ -107,7 +107,7 @@ class AWSManager:
                 **next_token
             )
             for event in response['events']:
-                msg = event['msg']
+                msg = event['message']
                 if not filter_pattern:
                     yield msg, None
                 elif re.search(filter_pattern, msg):
