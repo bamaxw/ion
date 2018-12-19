@@ -106,18 +106,7 @@ class AWSManager:
                 startFromHead=True,
                 **next_token
             )
-            for event in response['events']:
-                msg = event['message']
-                if not filter_pattern:
-                    yield msg, None
-                elif re.search(filter_pattern, msg):
-                    if disable_highlight:
-                        yield msg, None
-                    else:
-                        msg_highlight = re.sub(f'({filter_pattern})', fr'{colors.yellow}\1{colors.reset}', msg)
-                        yield msg, msg_highlight
-                else:
-                    log.debug('Rejecting message: %s', event['message'])
+            yield from response['events']
             next_token = {'nextToken': response['nextForwardToken']}
             time.sleep(0.1)
 
