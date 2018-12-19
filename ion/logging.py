@@ -18,7 +18,7 @@ def get_level(level: str = DEFAULT) -> int:
     except AttributeError:
         return DEFAULT_LEVEL
 
-def verbose_to_level(verbosity: int) -> int:
+def verbosity_to_level(verbosity: int) -> int:
     '''
     Get logging loglevel corresponding to scripts verbosity
     for instance -vv is verbosity 2 and -v is verbosity 1
