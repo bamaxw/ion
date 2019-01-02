@@ -1,7 +1,7 @@
 '''Helper functions and classes for dealing with python functions'''
 from typing import Callable, Optional
 
-def describe_lambda(
+def describe_function(
         lambda_func: Callable,
         name: Optional[str] = None,
         qualname: Optional[str] = None,
