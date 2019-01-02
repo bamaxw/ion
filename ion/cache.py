@@ -93,6 +93,7 @@ def _from_cache_on_err(func: Callable, *, default: Any):
             if _cached is default:
                 raise
             return _cached
+    return _wrap
 
 def from_cache_on_err(
         func: Optional[Callable] = None,
