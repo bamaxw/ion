@@ -59,6 +59,10 @@ class AWSManager:
         '''Get file from S3 bucket'''
         return self.resource('s3').Object(bucket, key).get()['Body'].read().decode('utf-8')
 
+    def put_object(self, *, body: str, bucket: str, key: str, **kw):
+        '''Create or update file in S3'''
+        return self.client('s3').put_object(Body=body.encode('utf-8'), Bucket=bucket, Key=key, **kw)
+
     def stream_logs(
             self,
             log_group: str,
