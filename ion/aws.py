@@ -55,7 +55,7 @@ class AWSManager:
             args = {'NextToken': next_token}
         raise ValueError(f'Could not find export value for {export_name}')
 
-    def get_file(self, bucket: str, key: str) -> str:
+    def read_file(self, bucket: str, key: str) -> str:
         '''Get file from S3 bucket'''
         return self.resource('s3').Object(bucket, key).get()['Body'].read().decode('utf-8')
 
