@@ -76,6 +76,10 @@ class AWSManager:
             pass
         return self.client('s3').put_object(Body=body, Bucket=bucket, Key=key, **kw)
 
+    def remove_object(self, *, bucket: str, key: str, **kw):
+        '''Remove object from s3'''
+        return self.client('s3').delete_object(Bucket=bucket, Key=key, **kw)
+
     def stream_logs(
             self,
             log_group: str,
