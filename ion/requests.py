@@ -96,9 +96,9 @@ class Requests:
         self.session.mount('https://', adapter)
 
     @restart_on_connerr
-    def request(self, request_type, *a, **kw) -> 'requests.Response':
+    def request(self, method: str, *a, **kw) -> 'requests.Response':
         '''Generic request method that makes an appropriate request based on request type'''
-        return getattr(self.session, request_type)(*a, **kw)
+        return getattr(self.session, method)(*a, **kw)
 
     def get(self, *a, **kw):
         '''Alias for request('get')'''
