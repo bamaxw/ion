@@ -105,6 +105,7 @@ def no_www(url: str) -> str:
 
 def parse(
         url: str,
+        *,
         components: Optional[Union[str, List[str]]] = None,
         as_dict: bool = False
 ):
