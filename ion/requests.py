@@ -8,6 +8,7 @@ from requests.adapters import HTTPAdapter
 import requests
 
 from ._import import get_caller_module
+from .url import make_url, query_to_str
 
 log = logging.getLogger(__name__)
 
@@ -35,6 +36,15 @@ def restart_on_connerr(func):
         return func(self, *a, **kw)
     return _wrapper
 
+def request_repr(request: dict) -> str:
+    '''
+    Take request and convert it to its string representation of form
+    "<method>: <url>?<sorted_params>?<sorted_payload>"
+    '''
+    url_with_params = make_url(request['url'], request['params'])
+    payload_repr = query_to_str(request['payload'])
+    _repr = f"{request['method']}: {url_with_params}{payload_repr}"
+    return _repr
 
 class Requests:
     '''
