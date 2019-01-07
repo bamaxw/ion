@@ -70,13 +70,13 @@ class RateInfo:
         self.recently_processed = amount
 
 TEMPLATE_NO_TOTAL = clean_multiline('''
-Processed {processed} {item_name}s in {elapsed}s
-    {recent_rate} {item_name}s per second [AVG: {rate} {item_name}s per second]
+Processed {processed} {item_name} in {elapsed}s
+    {recent_rate} {item_name} per second [AVG: {rate} {item_name} per second]
 ''')
 
 TEMPLATE_TOTAL = clean_multiline('''
-Processed {processed} {item_name}s in {elapsed}s [{remaining} {item_name}s remaining]
-    {recent_rate} {item_name}s per second [AVG: {rate} {item_name}s per second]
+Processed {processed} {item_name} in {elapsed}s [{remaining} {item_name} remaining]
+    {recent_rate} {item_name} per second [AVG: {rate} {item_name} per second]
     {recent_remaining_time} seconds left [AVG: {remaining_time} seconds left]
 ''')
 
@@ -101,7 +101,7 @@ class Stopper:
             total: Optional[int] = None,
             logger: Callable = print,
             log_frequency: int = None,
-            item_name: str = 'item',
+            item_name: str = 'items',
             template: str = None
     ):
         self.rate = RateInfo(total=total)
@@ -112,7 +112,7 @@ class Stopper:
         self._template = template
         if template is None:
             self._template = TEMPLATE_TOTAL if total else TEMPLATE_NO_TOTAL
-        self._logger(f'Started processing {self.item_name}s!!!')
+        self._logger(f'Started processing {self.item_name}!!!')
 
     def get_message(self) -> str:
         '''Format template with data in RateInfo'''
