@@ -130,7 +130,7 @@ class Stopper:
     def _should_log(self) -> bool:
         if self._log_freq is None:
             return True
-        if self.rate.last + self._log_freq <= pts():
+        if self._last_logged + self._log_freq <= pts():
             return True
         return False
 
@@ -138,3 +138,4 @@ class Stopper:
         self.rate.log(amount)
         if self._should_log():
             self._logger(self.get_message())
+            self._last_logged = pts()
