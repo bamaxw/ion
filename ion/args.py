@@ -109,6 +109,11 @@ class ArgParser(object):
                 sub_msgs.append(f'\t{spec.short} / {spec.long}\t\t{key}: {spec.type.__name__}\tdefault: {spec.default}')
         return main_msg + '\n' + '\n'.join(sub_msgs)
 
+    def print_args(self) -> None:
+        '''Print all the registered arguments together with their values'''
+        for arg, value in self.arg_vals.items():
+            print(arg, value)
+
     def _parse_arg(self, key: str, arg_spec: ArgSpec) -> Any:
         arg_list = self.args
         if not arg_spec.named:
