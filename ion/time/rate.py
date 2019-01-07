@@ -134,8 +134,11 @@ class Stopper:
             return True
         return False
 
-    def log(self, amount: int = 1):
-        self.rate.log(amount)
-        if self._should_log():
+    def print(self, force: bool = False):
+        if force or self._should_log():
             self._logger(self.get_message())
             self._last_logged = pts()
+
+    def log(self, amount: int = 1):
+        self.rate.log(amount)
+        self.print()
