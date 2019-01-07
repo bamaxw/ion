@@ -1,4 +1,8 @@
 '''Root time module containing helper functions and classes for dealing with time and dates'''
+from dataclasses import dataclass, field
+from typing import Optional, Callable
+from collections import namedtuple
+
 second = 1000
 minute = 60 * second
 hour = 60 * minute
@@ -67,7 +71,6 @@ def format_seconds(seconds: float, _format: str = '%mm:%ss.%msms'):
     string = string.replace('%h', '{:02d}'.format(hours))
     string = string.replace('%d', '{:02d}'.format(days))
     return string
-
 
 from time import time, mktime
 from .ticktock import tick, tock

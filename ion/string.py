@@ -75,9 +75,7 @@ def clean_multiline(multiline_str: MultilineStr) -> str:
     if not lines:
         return ''
     space_count = count_leading(lines[0], char=' ')
-    print('pre', lines)
     lines = ltrim_multiline(lines, space_count)
-    print('post', lines)
     return '\n'.join(lines)
 
 def split(string: str, delimiters: MultilineStr = ' ') -> List[str]:
