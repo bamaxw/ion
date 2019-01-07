@@ -279,7 +279,6 @@ class Paginator(object):
     def __iter__(self):
         try:
             while self.after <= self.before:
-                print(self.after, self.before)
                 self.batch = self.issue_request()
                 if self.batch:
                     for item in self.clean_batch:
