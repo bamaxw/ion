@@ -1,8 +1,8 @@
 '''Useful helper classes and class helpers'''
+from functools import wraps, partial
 from pprint import pprint, pformat
+from typing import Type, Optional
 from dataclasses import asdict
-from functools import wraps
-from typing import Type
 
 import simplejson as json
 
@@ -89,17 +89,27 @@ class DCDict:
         return pformat(self.to_dict(), *a, **kw)
 
 
-def singleton(cls: Type):
+def singleton(cls: Optional[Type] = None, consider_args: bool = False):
     '''
     Any class decorated with this decorator will have only one instance
     After first initialization, any subsequent attempts to initialize the
     same class will result in its original instance being returned
     '''
+    if cls is None:
+        return partial(singleton, consider_args=consider_args)
     instances = {}
     @wraps(cls)
     def _class(*a, **kw) -> Type:
         if cls not in instances:
-            instances[cls] = cls(*a, **kw)
+            if consider_args:
+                instances[cls] = {}
+            else:
+                instances[cls] = cls(*a, **kw)
+        if consider_args:
+            key = (*a, tuple(sorted(kw.items())))
+            if key not in instances[cls]:
+                instances[cls] = cls(*a, **kw)
+            return instances[cls][key]
         return instances[cls]
     return _class
 
