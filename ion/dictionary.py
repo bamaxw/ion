@@ -1,4 +1,5 @@
 '''Helper functions for operations on dictionaries'''
+from typing import Iterable
 from copy import deepcopy
 import logging
 
@@ -78,3 +79,11 @@ def apply(dct: dict, key=lambda key: key, value=lambda val: val, item=None) -> d
     return {
         key(k): value(v) for k, v in dct.items()
     }
+
+def just_keys(dct: dict, keys: Iterable) -> dict:
+    '''Return a new dictionary containing just the specified keys'''
+    return {k: v for k, v in dct.items() if k in keys}
+
+def remove_keys(dct: dict, keys: Iterable) -> dict:
+    '''Return a new dictionary without specified keys'''
+    return {k: v for k, v in dct.items() if k not in keys}
