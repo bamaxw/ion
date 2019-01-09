@@ -5,17 +5,13 @@ import time
 
 from requests.packages.urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
-import requests
+from requests import *
 
 from ._import import get_caller_module
 from .url import make_url, query_to_str
 
 log = logging.getLogger(__name__)
 
-
-def get_header(response: 'requests.Response', header: str, default=None):
-    '''Get header from response'''
-    return response.headers.get(header, default)
 
 def restart_on_connerr(func):
     '''
@@ -45,6 +41,7 @@ def request_repr(request: dict) -> str:
     payload_repr = query_to_str(request['payload'])
     _repr = f"{request['method']}: {url_with_params}{payload_repr}"
     return _repr
+
 
 class Requests:
     '''
@@ -81,9 +78,9 @@ class Requests:
         self.reset_session()
 
     def reset_session(self):
-        '''Resets requests.Session'''
+        '''Resets self.session'''
         log.info('Setting/Resetting session for Requests called from module %s', self._caller_module)
-        self.session = requests.Session()
+        self.session = Session()
         retries = Retry(
             total=self.max_retries,
             connect=0,
@@ -96,9 +93,9 @@ class Requests:
         self.session.mount('https://', adapter)
 
     @restart_on_connerr
-    def request(self, method: str, *a, **kw) -> 'requests.Response':
+    def request(self, method: str, *a, **kw) -> Response:
         '''Generic request method that makes an appropriate request based on request type'''
-        return getattr(self.session, method)(*a, **kw)
+        return self.session.request(method, *a, **kw)
 
     def get(self, *a, **kw):
         '''Alias for request('get')'''
