@@ -27,15 +27,15 @@ class AWSManager:
 
     def client(self, client_name: str, region_name: Optional[str] = None):
         '''Get boto3 client equivalent to boto3.client(client_name, region_name=region_name)'''
-        log.info('Creating %s client [region: %s]!', client_name, region_name or self.region_name)
         if client_name not in self._clients:
+            log.info('Creating %s client [region: %s]!', client_name, region_name or self.region_name)
             self._clients[client_name] = boto3.client(client_name, region_name=region_name or self.region_name)
         return self._clients[client_name]
 
     def resource(self, resource_name: str, region_name: Optional[str] = None):
         '''Get boto3 resource equivalent to boto3.resource(resource_name, region_name=region_name)'''
-        log.info('Creating %s resource [region: %s]!', resource_name, region_name or self.region_name)
         if resource_name not in self._clients:
+            log.info('Creating %s resource [region: %s]!', resource_name, region_name or self.region_name)
             self._resources[resource_name] = boto3.resource(resource_name, region_name=region_name or self.region_name)
         return self._resources[resource_name]
 
