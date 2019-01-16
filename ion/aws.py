@@ -34,7 +34,7 @@ class AWSManager:
 
     def resource(self, resource_name: str, region_name: Optional[str] = None):
         '''Get boto3 resource equivalent to boto3.resource(resource_name, region_name=region_name)'''
-        if resource_name not in self._clients:
+        if resource_name not in self._resources:
             log.info('Creating %s resource [region: %s]!', resource_name, region_name or self.region_name)
             self._resources[resource_name] = boto3.resource(resource_name, region_name=region_name or self.region_name)
         return self._resources[resource_name]
@@ -134,6 +134,7 @@ class AWSManager:
             yield from response['events']
             next_token = {'nextToken': response['nextForwardToken']}
             time.sleep(0.1)
+
 
 
 # AWSManager with default variables is available as AWS from ion.aws
