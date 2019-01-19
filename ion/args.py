@@ -1,14 +1,14 @@
 from typing import Dict, Optional, Iterable, List, Any
-from helpers.bash import colors
-from helpers.decorators import aslist
-from helpers import JsonDict
-from copy import copy
 from dataclasses import dataclass
-import __main__
+from copy import copy
 import logging
 import sys
+import __main__
 
-logger = logging.getLogger('ArgParser')
+from ion.bash import colors
+from ion.decorators import aslist
+
+logger = logging.getLogger(__name__)
 
 # TODO: Write documentation
 
@@ -30,7 +30,7 @@ class ArgSpec:
 
 
 class ArgParser(object):
-    def __init__(self, script_name: Optional[str]=None, starts_at: int=0) -> None:
+    def __init__(self, script_name: Optional[str] = None, starts_at: int = 0) -> None:
         self.cmd_name = script_name or sys.argv[0]
         self.args: List[str] = sys.argv[starts_at+1:]
         self.arg_specs: Dict[str, ArgSpec] = {}
