@@ -5,7 +5,7 @@ import json
 
 import flask
 
-from ion.dict import path
+from ion.dictionary import path
 from ion.time import pts
 
 log = logging.getLogger(__name__)
