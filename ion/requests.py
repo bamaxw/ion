@@ -39,7 +39,7 @@ def request_repr(request: dict) -> str:
     '''
     url_with_params = make_url(request['url'], request['params'])
     payload_repr = query_to_str(request['payload'])
-    _repr = f"{request['method']}: {url_with_params}{payload_repr}"
+    _repr = f"{request['method']}: {url_with_params}$$Payload$$:{payload_repr}"
     return _repr
 
 
