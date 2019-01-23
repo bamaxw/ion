@@ -89,7 +89,8 @@ def Response( # pylint: disable=invalid-name
         *,
         status: int,
         headers: Optional[dict] = None,
-        apply_headers: Optional[list] = None
+        apply_headers: Optional[list] = None,
+        force_json: bool = False
 ):
     '''
     A wrapper around flask.Response constructor facilitating easier use and implementing various default values
@@ -107,7 +108,7 @@ def Response( # pylint: disable=invalid-name
         apply_headers = []
     for header_type in apply_headers:
         headers = dict(headers, **HEADER_PRESETS[header_type])
-    if not isinstance(content, str): # Json stringify response if it isn't a string
+    if not isinstance(content, str) or force_json: # Json stringify response if it isn't a string
         json_content = json.dumps(content)
     else:
         json_content = content
