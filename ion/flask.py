@@ -109,6 +109,8 @@ def Response( # pylint: disable=invalid-name
         headers = dict(headers, **HEADER_PRESETS[header_type])
     if not isinstance(content, str): # Json stringify response if it isn't a string
         json_content = json.dumps(content)
+    else:
+        json_content = content
     return flask.Response(json_content, status=status, headers=headers)
 
 def APIResponse( # pylint: disable=invalid-name
