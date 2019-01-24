@@ -30,13 +30,13 @@ def re_filter(
     '''Filter out events in a stream if they don't match specified regex expression'''
     if key:
         def filter_func(event: dict) -> bool:
-            event = event[key]
-            return re.search(regex, event)
+            return re.search(regex, event[key])
     else:
         def filter_func(event: str) -> bool:
             return re.search(regex, event)
     for event in filter(stream, filter_func):
         if highlight:
+            print(event)
             yield re.sub(f'({regex})', fr'{colors.yellow}\1{colors.reset}', event)
         else:
             yield event
