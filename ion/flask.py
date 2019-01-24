@@ -109,7 +109,7 @@ def Response( # pylint: disable=invalid-name
     for header_type in apply_headers:
         headers = dict(headers, **HEADER_PRESETS[header_type])
     if not isinstance(content, str) or force_json: # Json stringify response if it isn't a string
-        json_content = json.dumps(content)
+        json_content = json.dumps(content, use_decimal=True)
     else:
         json_content = content
     return flask.Response(json_content, status=status, headers=headers)
