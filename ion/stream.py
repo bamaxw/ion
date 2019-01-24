@@ -38,7 +38,7 @@ def re_filter(
         if key:
             event = event[key]
         if highlight:
-            yield re.sub(f'({regex})', fr'{colors.yellow}\1{colors.reset}', event[key])
+            yield re.sub(f'({regex})', fr'{colors.yellow}\1{colors.reset}', event)
         else:
             yield event
 
