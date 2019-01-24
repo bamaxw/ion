@@ -87,3 +87,19 @@ def just_keys(dct: dict, keys: Iterable) -> dict:
 def remove_keys(dct: dict, keys: Iterable) -> dict:
     '''Return a new dictionary without specified keys'''
     return {k: v for k, v in dct.items() if k not in keys}
+
+def multikey_dict(dct: dict) -> dict:
+    '''
+    Create a new dict which maps each value to each element of a tuple in dict's key
+    Usage:
+        >>> multikey_dict({(1, 2, 3): 'max'})
+        {1: 'max', 2: 'max', 3: 'max'}
+    '''
+    new_dct = {}
+    for key, val in dct.items():
+        if isinstance(key, tuple):
+            for _key in key:
+                new_dct[_key] = val
+        else:
+            new_dct[key] = val
+    return new_dct
