@@ -35,9 +35,10 @@ def re_filter(
         def filter_func(event: str) -> bool:
             return re.search(regex, event)
     for event in filter(stream, filter_func):
+        if key:
+            event = event[key]
         if highlight:
-            print(event)
-            yield re.sub(f'({regex})', fr'{colors.yellow}\1{colors.reset}', event)
+            yield re.sub(f'({regex})', fr'{colors.yellow}\1{colors.reset}', event[key])
         else:
             yield event
 
