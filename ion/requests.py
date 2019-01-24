@@ -90,7 +90,7 @@ class Requests:
             status_forcelist=self.status_forcelist,
             raise_on_status=True
         )
-        adapter = HTTPAdapter(pool_connections=50, pool_maxsize=100, max_retries=retries)
+        adapter = HTTPAdapter(pool_connections=300, pool_maxsize=300, max_retries=retries)
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
 
