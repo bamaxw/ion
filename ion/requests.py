@@ -38,7 +38,9 @@ def request_repr(request: dict) -> str:
     "<method>: <url>?<sorted_params>?<sorted_payload>"
     '''
     url_with_params = make_url(request['url'], request['params'])
-    payload_repr = query_to_str(request['payload']).replace('?', '$$Payload:$$')
+    payload_repr = query_to_str(request['payload'])
+    if payload_repr:
+        payload_repr = '$$Payload:' + payload_repr
     _repr = f"{request['method']}: {url_with_params}{payload_repr}"
     return _repr
 
