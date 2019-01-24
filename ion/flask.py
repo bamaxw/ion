@@ -1,7 +1,7 @@
 from typing import Callable, Optional, List
 from functools import wraps, partial
 import logging
-import json
+import simplejson as json
 
 import flask
 
