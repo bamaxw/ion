@@ -108,7 +108,7 @@ def singleton(cls: Optional[Type] = None, consider_args: bool = False):
         if consider_args:
             key = (*a, tuple(sorted(kw.items())))
             if key not in instances[cls]:
-                instances[cls] = cls(*a, **kw)
+                instances[cls][key] = cls(*a, **kw)
             return instances[cls][key]
         return instances[cls]
     return _class
