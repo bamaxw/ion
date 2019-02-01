@@ -1,14 +1,14 @@
 '''Helper classes and functions facilitating boto3 usage'''
 from typing import Optional, Generator
+from functools import wraps
 import logging
 import time
-import re
 
 import boto3
+from botocore.exceptions import ClientError
+from boto3.dynamodb.types import TypeDeserializer
 
-from .json import dump
 from .time import msts
-from .bash import colors
 
 AWS_DEFAULT_REGION = 'eu-west-1'
 log = logging.getLogger(__name__)
@@ -139,3 +139,55 @@ class AWSManager:
 
 # AWSManager with default variables is available as AWS from ion.aws
 AWS = AWSManager()
+
+def ddb_deserialize(o: dict):
+    '''
+    Deserialize DDB value
+    Usage:
+        >>> ddb_deserialize({'N': '200'})
+        Decimal('200')
+    '''
+    return TypeDeserializer().deserialize(o)
+
+def retry_on(*error_codes):
+    '''
+    Creates a decorator function that wraps any function, and in effect, if that function
+    raises a botocore's ClientError, it's error code is going to be compared with the list
+    passed to the 'retry_on' function
+    If the code matches at least one of the codes provided - the function is going to be retried
+    '''
+    error_codes = set(error_codes)
+    def _retry_on_decorator(func):
+        @wraps(func)
+        def _wrapper(*a, **kw):
+            retries = 0
+            while True:
+                try:
+                    return func(*a, **kw)
+                except ClientError as ex:
+                    if ex.response['Error']['Code'] not in error_codes:
+                        raise
+                    time.sleep(min(2 ** retries, 10))
+                    retries += 1
+        return _wrapper
+    return _retry_on_decorator
+
+def ignore(*error_codes):
+    '''
+    Creates a decorator function that wraps any function, and in effect, if that function
+    raises a botocore's ClientError, it's error code is going to be compared with the list
+    passed to the 'retry_on' function
+    If the code matches at least one of the codes provided - the error is going to be ignored
+    and the function exits
+    '''
+    error_codes = set(error_codes)
+    def _ignore_decorator(func):
+        @wraps(func)
+        def _wrapper(*a, **kw):
+            try:
+                return func(*a, **kw)
+            except ClientError as ex:
+                if ex.response['Error']['Code'] not in error_codes:
+                    raise
+        return _wrapper
+    return _ignore_decorator
