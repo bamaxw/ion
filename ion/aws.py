@@ -1,12 +1,12 @@
 '''Helper classes and functions facilitating boto3 usage'''
-from typing import Optional, Generator
+from typing import Optional, Generator, Any
 from functools import wraps
 import logging
 import time
 
+from boto3.dynamodb.types import TypeDeserializer
 import boto3
 from botocore.exceptions import ClientError
-from boto3.dynamodb.types import TypeDeserializer
 
 from .time import msts
 
@@ -140,14 +140,14 @@ class AWSManager:
 # AWSManager with default variables is available as AWS from ion.aws
 AWS = AWSManager()
 
-def ddb_deserialize(o: dict):
+def ddb_deserialize(o: dict, **kw) -> Any:
     '''
     Deserialize DDB value
     Usage:
         >>> ddb_deserialize({'N': '200'})
         Decimal('200')
     '''
-    return TypeDeserializer().deserialize(o)
+    return TypeDeserializer(**kw).deserialize(o)
 
 def retry_on(*error_codes):
     '''
