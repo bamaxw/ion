@@ -1,5 +1,5 @@
 '''Helper classes and functions facilitating boto3 usage'''
-from typing import Optional, Generator, Any
+from typing import Any, Dict, Generator, Optional
 from functools import wraps
 import logging
 import time
@@ -42,17 +42,12 @@ class AWSManager:
     def get_export(self, export_name: str, **kw):
         '''Get value of CloudFormation export'''
         cloud_formation = self.client('cloudformation', **kw)
-        args = {}
-        while True:
-            response = cloud_formation.list_exports(**args)
+        export_paginator = cloud_formation.get_paginator('list_exports')
+        for response in export_paginator.paginate():
             for export in response.get('Exports', []):
                 if export['Name'] == export_name:
                     log.warning("Export '%s': %s", export_name, export['Value'])
                     return export['Value']
-            next_token = response.get('NextToken')
-            if next_token is None:
-                break
-            args = {'NextToken': next_token}
         raise ValueError(f'Could not find export value for {export_name}')
 
     def read_file(self, bucket: str, key: str, *, decode: bool = True) -> str:
